@@ -24,4 +24,6 @@ Instead of guessing hex codes or using default PyMOL rainbows, this tool uses Ma
 
   Named in honor of Claude Monet's *Nymphéas* (Water Lilies) and his mastery of visual perception 
   
-  (thanks to gemini, as i'm still a "tanche" in python) 
+## Thanks to
+* Gemini, as i'm still a "tanche" in python
+* pymol_viridis` script by Shyam Saladi.
