@@ -19,7 +19,7 @@ Instead of guessing hex codes or using default PyMOL or chimeraX rainbows, this 
 2. Open PyMOL.
 3. In the PyMOL command line, run the script:
    ```pymol
-   run /path/to/molnympheas.py
+   run /path/to/MolNympheas.py
    
 * **ChimeraX**
 1. Download the `MolXNympheas.py` file to your computer.
