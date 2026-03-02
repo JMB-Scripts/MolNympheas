@@ -5,7 +5,7 @@ MolXNympheas: A Smart Color Palette Picker for ChimeraX
 
 DESCRIPTION
     MolXNympheas is a ChimeraX plugin designed to bring mathematically perfect, 
-    colorblind-friendly palettes to your structural biology figures. 
+    palettes to your structural biology figures. 
     Named in honor of Claude Monet's "Nymphéas" (Water Lilies), this tool 
     uses Matplotlib to generate perceptually uniform colors (Viridis, Turbo, 
     Plasma, etc.) and automatically calculates high-contrast complementary 
@@ -26,7 +26,9 @@ FEATURES
 USAGE
     In the ChimeraX command line, run:
         open /path/to/MolXNympheas.py
-
+v2: 02/03/2026
+- Colorblind Accessibility (CVD Matrix) thanks to Florain Chenavier
+- modify button to allow to use your own color or to remove the color (Thx Flo) from the palette or put back the default one 
 
 ==============================================================================
 '''
