@@ -17,7 +17,12 @@ Instead of guessing hex codes or using default PyMOL or chimeraX rainbows, this 
 * **Pymol**
 1. Download the `MolNympheas.py` file to your computer.
 2. Open PyMOL.
-3. In the PyMOL command line, run the script:
+3. For the first time you might need to install matplotlib in pymol
+   To do so just type in the excution box at the bottom 
+   ```pymol
+   pip install matplotlib
+   
+4. In the PyMOL command line, run the script:
    ```pymol
    run /path/to/MolNympheas.py
    
