@@ -5,7 +5,7 @@ MolNympheas: A Smart Color Palette Picker for PyMOL
 
 DESCRIPTION
     MolNympheas is a PyMOL plugin designed to bring mathematically perfect, 
-    colorblind-friendly palettes to your structural biology figures. 
+    palettes to your structural biology figures. 
     Named in honor of Claude Monet's "Nymphéas" (Water Lilies), this tool 
     uses Matplotlib to generate perceptually uniform colors (Viridis, Turbo, 
     Plasma, etc.) and automatically calculates high-contrast complementary 
