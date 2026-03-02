@@ -5,11 +5,11 @@
 Instead of guessing hex codes or using default PyMOL or chimeraX rainbows, this tool uses Matplotlib to let you smoothly slide through perceptually uniform palettes (like *Viridis*, *Turbo*, *Plasma*, etc.) and automatically calculates the highest-contrast complementary colors for your complexes.
 
 
-
+PyMol
 <img width="1433" height="862" alt="image" src="https://github.com/user-attachments/assets/9956af61-a892-4746-a969-0892017990ca" />
 
 
-
+ChimeraX
 <img width="1419" height="818" alt="image" src="https://github.com/user-attachments/assets/83446dff-d095-49ab-b9e1-a2bda2704d4b" />
 
 
