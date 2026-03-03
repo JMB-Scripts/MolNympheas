@@ -46,6 +46,17 @@ Instead of guessing hex codes or using default PyMOL or chimeraX rainbows, this 
    ```chimeraX
    open /path/to/MolNympheas.py   
 
+## Usage
+* **Choose your palette**
+   1. Either in the default list
+   2. Or in the 80+ list from matplotlib
+   3. Pick the shade
+       
+* **To apply the color**
+  1. In the "Apply to" section choose the selection
+  2. Click on the color box of your choice.
+  3. If you make new selection or new object in the "Apply to" section click on the arrow to refresh the list.
+  
 ## Why the name?
 Named in honor of Claude Monet's *Nymphéas* (Water Lilies) and his mastery of visual perception 
   
