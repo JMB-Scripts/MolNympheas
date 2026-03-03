@@ -4,15 +4,13 @@
 
 Instead of guessing hex codes or using default PyMOL or chimeraX rainbows, this tool uses Matplotlib to let you smoothly slide through perceptually uniform palettes (like *Viridis*, *Turbo*, *Plasma*, etc.) and automatically calculates the highest-contrast complementary colors for your complexes.
 
-
 **PyMol**
+
 <img width="600" alt="image" src="https://github.com/user-attachments/assets/9956af61-a892-4746-a969-0892017990ca" />
 
-
 **ChimeraX**
+
 <img width="600" alt="image" src="https://github.com/user-attachments/assets/83446dff-d095-49ab-b9e1-a2bda2704d4b" />
-
-
 
 ## ✨ Features
 * **Universal Cross-Compatibility:** Export your exact color scheme to a `.json` file in PyMOL and load it directly into ChimeraX (and vice versa)! The shared save format makes it effortless to keep your visual identity consistent across different software.
@@ -30,12 +28,12 @@ Instead of guessing hex codes or using default PyMOL or chimeraX rainbows, this 
 * **Pymol**
 1. Download the `MolNympheas.py` file to your computer.
 2. Open PyMOL.
-3. For the first time you might need to install matplotlib in pymol.
+(3. For the first time you might need to install matplotlib in PyMol.
 
    To do so just type in the excution box at the bottom 
    ```pymol
    pip install matplotlib
-   
+   )
 4. In the PyMOL command line, run the script:
    ```pymol
    run /path/to/MolNympheas.py
@@ -51,7 +49,7 @@ Instead of guessing hex codes or using default PyMOL or chimeraX rainbows, this 
 Named in honor of Claude Monet's *Nymphéas* (Water Lilies) and his mastery of visual perception 
   
 ## Thanks to
-* Florian Chenavier for the implementation of the colorblind (CVD) simulation matrix, and the script unification.
+* Florian Chenavier for the implementation of the colorblind (CVD) simulation matrix, and the scripts unification.
 * Gemini, as i'm still a "tanche" in python
 * Shyam Saladi, whose original pymol_viridis script (go visit his github) served as the starting inspiration for this project.
 
