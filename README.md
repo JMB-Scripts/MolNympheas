@@ -6,11 +6,11 @@ Instead of guessing hex codes or using default PyMOL or chimeraX rainbows, this 
 
 
 **PyMol**
-<img width="1433" height="862" alt="image" src="https://github.com/user-attachments/assets/9956af61-a892-4746-a969-0892017990ca" />
+<img width="600" alt="image" src="https://github.com/user-attachments/assets/9956af61-a892-4746-a969-0892017990ca" />
 
 
 **ChimeraX**
-<img width="1419" height="818" alt="image" src="https://github.com/user-attachments/assets/83446dff-d095-49ab-b9e1-a2bda2704d4b" />
+<img width="600" alt="image" src="https://github.com/user-attachments/assets/83446dff-d095-49ab-b9e1-a2bda2704d4b" />
 
 
 
@@ -41,17 +41,17 @@ Instead of guessing hex codes or using default PyMOL or chimeraX rainbows, this 
    run /path/to/MolNympheas.py
    
 * **ChimeraX**
-1. Download the `MolXNympheas.py` file to your computer.
+1. Download the `MolNympheas.py` file to your computer.
 2. Open chimeraX
 3. In the chimeraX command line, run the script:
    ```chimeraX
-   open /path/to/MolXNympheas.py   
+   open /path/to/MolNympheas.py   
 
 ## Why the name?
 Named in honor of Claude Monet's *Nymphéas* (Water Lilies) and his mastery of visual perception 
   
 ## Thanks to
-* Florian Chenavier for the implementation of the colorblind (CVD) simulation matrix.
+* Florian Chenavier for the implementation of the colorblind (CVD) simulation matrix, and the script unification.
 * Gemini, as i'm still a "tanche" in python
 * Shyam Saladi, whose original pymol_viridis script (go visit his github) served as the starting inspiration for this project.
 
