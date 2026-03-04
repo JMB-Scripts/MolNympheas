@@ -58,7 +58,8 @@ Instead of guessing hex codes or using default PyMOL or chimeraX rainbows, this 
   3. If you make new selection or new object in the "Apply to" section click on the arrow to refresh the list.
   
 ## Why the name?
-Named in honor of Claude Monet's *Nymphéas* (Water Lilies) and his mastery of visual perception 
+The idea came on a way back from Paris, on the train after isiting the Orsay museum. 
+It has been named in honor of Claude Monet's *Nymphéas* (Water Lilies) and his mastery of visual perception 
   
 ## Thanks to
 * Florian Chenavier for the implementation of the colorblind (CVD) simulation matrix, and the scripts unification.
