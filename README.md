@@ -34,7 +34,7 @@ Instead of guessing hex codes or using default PyMOL or chimeraX rainbows, this 
 
 * NOTE :
   For the first time with PyMol you might need to install matplotlib in PyMol.
-  To do so just type in the excution box at the bottom of the GUI 
+  To do so just type in the excution box at the bottom of the GUI (after "PyMol>") 
 
    ```pymol
    pip install matplotlib
