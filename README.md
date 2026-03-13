@@ -13,8 +13,11 @@ Instead of guessing hex codes or using default PyMOL or chimeraX rainbows, this 
 <img width="600" alt="image" src="https://github.com/user-attachments/assets/83446dff-d095-49ab-b9e1-a2bda2704d4b" />
 
 ## Version
-13-03-26: **v3.1.0**
+13-03-26: 
+           **v3.1.0**
+
             * - add a color picker tool
+            
             * - add a gradient generator for custom color
          
 ## ✨ Features
