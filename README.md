@@ -42,7 +42,7 @@ Instead of guessing hex codes or using default PyMOL or chimeraX rainbows, this 
 
 * NOTE :
   For the first time with PyMol you might need to install matplotlib in PyMol.
-  To do so just type in the excution box at the bottom of the GUI (after "PyMol>") 
+  To do so just type in the command line box at the bottom of the GUI (after "PyMol>") 
 
    ```pymol
    pip install matplotlib
@@ -66,11 +66,11 @@ Instead of guessing hex codes or using default PyMOL or chimeraX rainbows, this 
   3. If you make new selection or new object in the "Apply to" section click on the arrow to refresh the list.
   
 ## Why the name?
-The idea came on a way back from Paris, on the train after isiting the Orsay museum. 
+The idea came on a way back from Paris, on the train after visiting the Orsay museum. 
 It has been named in honor of Claude Monet's *Nymphéas* (Water Lilies) and his mastery of visual perception 
   
 ## Thanks to
-* Florian Chenavier for the implementation of the colorblind (CVD) simulation matrix, and the scripts unification.
+* Florian Chenavier for the implementation of the colorblind (CVD) simulation matrix, and the scripts unification (one script to rule them all!!).
 * Gemini, as i'm still a "tanche" in python
 * Shyam Saladi, whose original pymol_viridis script (go visit his github) served as the starting inspiration for this project.
 
