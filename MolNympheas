@@ -10,29 +10,41 @@ DESCRIPTION
     uses Matplotlib to generate perceptually uniform colors (Viridis, Turbo, 
     Plasma, etc.) and automatically calculates high-contrast complementary 
     colors for complex assemblies.
-    
-    Universal Version: Automatically detects whether it is running inside
-    PyMOL or ChimeraX and adapts its commands accordingly.
+    It automatically detects whether it is running inside PyMOL or ChimeraX and adapts its commands accordingly.
 
 FEATURES
-    - Universal Environment Detection (PyMOL / ChimeraX). Big thanks to Florian Chenavier
-    - Clickable Color Blocks (No cluttered Apply buttons!). Thanks to the "Beta-test people"
+    - Universal Environment Detection (PyMOL / ChimeraX). (Thanks To Florian Chenavier)
+    - Clickable Color Blocks (No cluttered Apply buttons!) (Thanks to the "Beta-tests people")
     - Tabbed GUI for clean workflow
     - Dynamic high-contrast color generation
     - Custom Hex code input for MAIN color and INDIVIDUAL palette blocks
+    - Color picker tool
     - Save & Load palette configurations via JSON (Fully cross-compatible: palettes made in PyMOL can be loaded in ChimeraX, and vice versa)
     - Access to 80+ Matplotlib scientific colormaps
-    - Auto-detection of loaded models / selections in Pymol or in ChimeraX GUI
-    - CVD Matrix analysis for colorblindness accessibility. Thanks To Florian Chenavier
+    - Auto-detection of loaded models / selections in Pymol or ChimeraX GUI to apply colors
+    - CVD Matrix analysis for colorblindness accessibility (Thanks To Florian Chenavier)
 
 USAGE
-    In PyMOL:   run /path/to/MolNympheas.py
     In ChimeraX: open /path/to/MolNympheas.py
-    In PyMol for the first 
+    
+    In PyMOL:   run /path/to/MolNympheas.py
+    For PyMol for the first use you may need to install matplotlib inside PyMol
+            In the Command line of PyMol (PyMol>) enter
+            pip install matplotlib
 
 INSPIRATION
-    Initially inspired by the `pymol_viridis` script by Shyam Saladi.    
-v3.0.0 03-03-2026 
+    Initially inspired by the `pymol_viridis` script by Shyam Saladi. 
+    Orsay Museum Paris for the fantastic collections.
+Versionning:
+
+03-03-2026: v3.0.0 
+    One script to rule them all !! ChimeraX and PyMol 
+    (might get a peace Nobel price for bringing PyMoler and ChimeraXer together)
+
+13-03-2026: V3.1.0   
+    add Color picker for the main color
+    add Gradient generator 
+
 ==============================================================================
 '''
 
@@ -55,16 +67,18 @@ try:
     from PyQt6.QtWidgets import (QWidget, QDialog, QVBoxLayout, QHBoxLayout, 
                                  QComboBox, QLineEdit, QPushButton, QLabel, 
                                  QSlider, QFrame, QGridLayout, QFileDialog, 
-                                 QTableWidget, QTableWidgetItem, QTabWidget)
+                                 QTableWidget, QTableWidgetItem, QTabWidget,
+                                 QInputDialog, QColorDialog)
     from PyQt6.QtCore import Qt, pyqtSignal
-    from PyQt6.QtGui import QColor, QPalette, QCursor
+    from PyQt6.QtGui import QColor, QCursor
 except ImportError:
     from PyQt5.QtWidgets import (QWidget, QDialog, QVBoxLayout, QHBoxLayout, 
                                  QComboBox, QLineEdit, QPushButton, QLabel, 
                                  QSlider, QFrame, QGridLayout, QFileDialog, 
-                                 QTableWidget, QTableWidgetItem, QTabWidget)
+                                 QTableWidget, QTableWidgetItem, QTabWidget,
+                                 QInputDialog, QColorDialog)
     from PyQt5.QtCore import Qt, pyqtSignal
-    from PyQt5.QtGui import QColor, QPalette, QCursor
+    from PyQt5.QtGui import QColor, QCursor
 
 import matplotlib.cm as cm
 import matplotlib.colors as mcolors
@@ -151,7 +165,7 @@ class AddPaletteDialog(QDialog):
     def get_selected(self):
         return self.combo.currentText()
 
-# --- NEW DIALOG TO MODIFY INDIVIDUAL BLOCKS ---
+# --- DIALOG TO MODIFY INDIVIDUAL BLOCKS ---
 class ModifyColorDialog(QDialog):
     def __init__(self, current_hex, parent=None):
         super().__init__(parent)
@@ -200,7 +214,7 @@ class ModifyColorDialog(QDialog):
 
 # --- MAIN APPLICATION DIALOG ---
 class ColorPickerDialog(QDialog):
-    def __init__(self, session=None): # Session defaults to None for PyMOL
+    def __init__(self, session=None):
         super().__init__()
         self.session = session  
         self.setWindowTitle(f"MolNympheas - {'ChimeraX' if ENV == 'chimera' else 'PyMOL'}")
@@ -208,6 +222,7 @@ class ColorPickerDialog(QDialog):
         
         self.custom_hex_mode = False
         self.custom_main_hex = "#000000"
+        self.custom_gradients = {} 
 
         # --- TOP LEVEL LAYOUT ---
         main_dialog_layout = QVBoxLayout()
@@ -255,7 +270,7 @@ class ColorPickerDialog(QDialog):
         pal_layout = QHBoxLayout()
         pal_layout.addWidget(QLabel("Palette:"))
         self.pal_combo = QComboBox()
-        self.pal_combo.addItems(['viridis', 'plasma', 'inferno', 'cubehelix', 'cividis', 'turbo','twilight'])
+        self.pal_combo.addItems(['viridis', 'plasma', 'inferno', 'magma', 'cividis', 'turbo'])
         self.pal_combo.currentIndexChanged.connect(self.on_palette_changed)
         pal_layout.addWidget(self.pal_combo)
         
@@ -276,22 +291,28 @@ class ColorPickerDialog(QDialog):
         self.slider.valueChanged.connect(self.on_slider_moved)
         pal_tab_layout.addWidget(self.slider)
 
-        # Preview & Hex
+        # Preview & Hex & Pipette
         preview_layout = QHBoxLayout()
+        
+        # SCREEN COLOR PICKER BUTTON
+        self.btn_pipette = QPushButton("💉")
+        self.btn_pipette.setFixedWidth(35)
+        self.btn_pipette.setToolTip("Pick color from screen")
+        self.btn_pipette.clicked.connect(self.pick_color_from_screen)
+        
         self.hex_input = QLineEdit()
         self.hex_input.setAlignment(Qt.AlignmentFlag.AlignCenter if hasattr(Qt, 'AlignmentFlag') else Qt.AlignCenter)
         self.hex_input.setFixedWidth(80)
         self.hex_input.editingFinished.connect(self.on_hex_entered)
         
-        # USE CUSTOM CLICKABLE LABEL FOR MAIN PREVIEW
         self.preview = ClickableLabel()
         self.preview.setFixedSize(120, 50)
-        self.preview.setAutoFillBackground(True)
         self.preview.setCursor(Qt.CursorShape.PointingHandCursor if hasattr(Qt, 'CursorShape') else Qt.PointingHandCursor)
         self.preview.setToolTip("Click to apply this main color")
         self.preview.clicked.connect(self.apply_main_color)
         
         preview_layout.addStretch()
+        preview_layout.addWidget(self.btn_pipette)
         preview_layout.addWidget(self.hex_input)
         preview_layout.addWidget(self.preview)
         preview_layout.addStretch()
@@ -319,6 +340,12 @@ class ColorPickerDialog(QDialog):
         self.current_sugg_vals = []
         self.sugg_custom_hex = [] 
         
+        # CREATE CUSTOM PALETTE BUTTON
+        self.btn_create_palette = QPushButton("🌈 Create Gradient Palette from these Colors")
+        self.btn_create_palette.setToolTip("Turns the colors currently shown above into a continuous palette in your dropdown!")
+        self.btn_create_palette.clicked.connect(self.create_custom_gradient)
+        pal_tab_layout.addWidget(self.btn_create_palette)
+
         self.tab_palette.setLayout(pal_tab_layout)
 
         # ==========================================
@@ -354,6 +381,48 @@ class ColorPickerDialog(QDialog):
         self.update_preview()
         
         self.tabs.currentChanged.connect(self.update_matrix_table)
+
+    # --- NATIVE SCREEN COLOR PICKER ---
+    def pick_color_from_screen(self):
+        color = QColorDialog.getColor(Qt.white, self, "Pick a Color")
+        if color.isValid():
+            hex_color = color.name().upper()
+            self.hex_input.setText(hex_color)
+            self.on_hex_entered()
+
+    # --- CUSTOM PALETTE LOGIC ---
+    def create_custom_gradient(self):
+        name, ok = QInputDialog.getText(self, "Custom Palette", "Enter a name for your new palette (e.g., MyLabColors):")
+        if ok and name:
+            name = name.strip()
+            if not name: return
+            
+            colors = []
+            if self.custom_hex_mode:
+                colors.append(self.custom_main_hex)
+            else:
+                _, hex_c = self.get_color_from_val(self.slider.value())
+                colors.append(hex_c)
+                
+            for lbl in self.sugg_labels:
+                colors.append(lbl.text())
+                
+            self.custom_gradients[name] = colors
+            new_cmap = mcolors.LinearSegmentedColormap.from_list(name, colors)
+            
+            try:
+                import matplotlib as mpl
+                mpl.colormaps.register(new_cmap, name=name, force=True)
+            except Exception:
+                try:
+                    cm.register_cmap(name=name, cmap=new_cmap)
+                except: pass
+                    
+            if self.pal_combo.findText(name) == -1:
+                self.pal_combo.addItem(name)
+            self.pal_combo.setCurrentText(name)
+            self.slider.setValue(0)
+            print(f"MolXNympheas: Created and registered new palette '{name}'.")
 
     # --- MATRIX LOGIC ---
     def simulate_cvd(self, rgb, matrix):
@@ -415,11 +484,11 @@ class ColorPickerDialog(QDialog):
                 if i == j:
                     item.setBackground(QColor("#eeeeee"))
                 elif value < 0.15:
-                    item.setBackground(QColor("#ff9999")) # Too close
+                    item.setBackground(QColor("#ff9999")) 
                 elif value < 0.30:
-                    item.setBackground(QColor("#ffe599")) # Caution
+                    item.setBackground(QColor("#ffe599")) 
                 else:
-                    item.setBackground(QColor("#b6fcb6")) # Good contrast
+                    item.setBackground(QColor("#b6fcb6")) 
 
                 self.matrix_table.setItem(i + 1, j + 1, item)
 
@@ -447,11 +516,12 @@ class ColorPickerDialog(QDialog):
                 "palette_name": self.pal_combo.currentText(),
                 "slider_value": self.slider.value(),
                 "num_suggestions": len(self.sugg_blocks),
-                "sugg_custom_hex": self.sugg_custom_hex 
+                "sugg_custom_hex": self.sugg_custom_hex,
+                "custom_gradients": self.custom_gradients 
             }
             try:
                 with open(file_name, 'w') as f: json.dump(data, f, indent=4)
-                print(f"MolNympheas: Palette saved successfully to {file_name}")
+                print(f"MolXNympheas: Palette saved successfully to {file_name}")
             except Exception as e:
                 print(f"Error saving file: {e}")
 
@@ -460,6 +530,20 @@ class ColorPickerDialog(QDialog):
         if file_name:
             try:
                 with open(file_name, 'r') as f: data = json.load(f)
+                
+                self.custom_gradients = data.get("custom_gradients", {})
+                for c_name, c_colors in self.custom_gradients.items():
+                    new_cmap = mcolors.LinearSegmentedColormap.from_list(c_name, c_colors)
+                    try:
+                        import matplotlib as mpl
+                        mpl.colormaps.register(new_cmap, name=c_name, force=True)
+                    except Exception:
+                        try:
+                            cm.register_cmap(name=c_name, cmap=new_cmap)
+                        except: pass
+                    if self.pal_combo.findText(c_name) == -1:
+                        self.pal_combo.addItem(c_name)
+                
                 self.custom_hex_mode = data.get("custom_hex_mode", False)
                 self.custom_main_hex = data.get("custom_main_hex", "#000000")
                 self.pal_combo.blockSignals(True)
@@ -486,25 +570,24 @@ class ColorPickerDialog(QDialog):
             except Exception as e:
                 print(f"Error loading file: {e}")
 
-    # A robust, recursive function to fully obliterate layouts
     def clear_layout(self, layout):
         if layout is not None:
             while layout.count():
                 item = layout.takeAt(0)
                 widget = item.widget()
                 if widget is not None:
-                    widget.hide()           # Visually remove immediately
-                    widget.deleteLater()    # Schedule memory clear
-                    widget.setParent(None)  # Detach from hierarchy
+                    widget.hide()           
+                    widget.deleteLater()    
+                    widget.setParent(None)  
                 else:
                     sub_layout = item.layout()
                     if sub_layout is not None:
-                        self.clear_layout(sub_layout) # Recursion!
+                        self.clear_layout(sub_layout) 
                         sub_layout.deleteLater()
                         sub_layout.setParent(None)
 
     def remove_all_suggestion_blocks(self):
-        self.clear_layout(self.sugg_grid) # Fully nukes the grid and everything inside it
+        self.clear_layout(self.sugg_grid) 
         self.sugg_blocks.clear()
         self.sugg_labels.clear()
         self.current_sugg_vals.clear()
@@ -573,10 +656,8 @@ class ColorPickerDialog(QDialog):
         self.sugg_labels.append(lbl)
         vbox.addWidget(lbl)
         
-        # USE CUSTOM CLICKABLE LABEL FOR SUGGESTION BLOCKS
         blk = ClickableLabel()
         blk.setFixedSize(80, 40)
-        blk.setAutoFillBackground(True)
         blk.setCursor(Qt.CursorShape.PointingHandCursor if hasattr(Qt, 'CursorShape') else Qt.PointingHandCursor)
         blk.setToolTip("Click to apply this color")
         blk.clicked.connect(lambda i=idx: self.apply_color(self.current_sugg_vals[i]))
@@ -584,13 +665,11 @@ class ColorPickerDialog(QDialog):
         vbox.addWidget(blk)
         
         btn_layout = QHBoxLayout()
-        
         btn_modify = QPushButton("⚙️")
         btn_modify.setFixedWidth(25)
         btn_modify.setToolTip("Modify or Remove Color")
         btn_modify.clicked.connect(lambda checked, i=idx: self.modify_suggestion_block(i))
         
-        # Center the gear icon beneath the color block
         btn_layout.addStretch()
         btn_layout.addWidget(btn_modify)
         btn_layout.addStretch()
@@ -626,9 +705,7 @@ class ColorPickerDialog(QDialog):
         
         if self.custom_hex_mode:
             main_hex = self.custom_main_hex
-            pal = self.preview.palette()
-            pal.setColor(QPalette.ColorRole.Window if hasattr(QPalette, 'ColorRole') else QPalette.Window, QColor(main_hex))
-            self.preview.setPalette(pal)
+            self.preview.setStyleSheet(f"background-color: {main_hex};")
             h, l, s = colorsys.rgb_to_hls(*mcolors.to_rgb(main_hex))
             step_size = 1.0 / num_colors
             
@@ -641,18 +718,14 @@ class ColorPickerDialog(QDialog):
                     
                 self.current_sugg_vals[i] = s_hex 
                 self.sugg_labels[i].setText(s_hex)
-                s_pal = self.sugg_blocks[i].palette()
-                s_pal.setColor(QPalette.ColorRole.Window if hasattr(QPalette, 'ColorRole') else QPalette.Window, QColor(s_hex))
-                self.sugg_blocks[i].setPalette(s_pal)
+                self.sugg_blocks[i].setStyleSheet(f"background-color: {s_hex};")
         else:
             slider_val = self.slider.value()
             _, main_hex = self.get_color_from_val(slider_val)
             self.hex_input.blockSignals(True)
             self.hex_input.setText(main_hex.upper())
             self.hex_input.blockSignals(False)
-            pal = self.preview.palette()
-            pal.setColor(QPalette.ColorRole.Window if hasattr(QPalette, 'ColorRole') else QPalette.Window, QColor(main_hex))
-            self.preview.setPalette(pal)
+            self.preview.setStyleSheet(f"background-color: {main_hex};")
             step_size = 256 / num_colors
             
             for i in range(len(self.sugg_blocks)):
@@ -665,9 +738,7 @@ class ColorPickerDialog(QDialog):
                     _, s_hex = self.get_color_from_val(sugg_val)
                     
                 self.sugg_labels[i].setText(s_hex.upper())
-                s_pal = self.sugg_blocks[i].palette()
-                s_pal.setColor(QPalette.ColorRole.Window if hasattr(QPalette, 'ColorRole') else QPalette.Window, QColor(s_hex))
-                self.sugg_blocks[i].setPalette(s_pal)
+                self.sugg_blocks[i].setStyleSheet(f"background-color: {s_hex};")
                 
         if self.tabs.currentIndex() == 1:
             self.update_matrix_table()
@@ -676,7 +747,6 @@ class ColorPickerDialog(QDialog):
         if index >= len(self.sugg_blocks):
             return  
 
-        # 1. Back up data minus the removed element
         old_count = len(self.sugg_blocks)
         old_vals = self.current_sugg_vals.copy()
         old_custom = self.sugg_custom_hex.copy()
@@ -684,19 +754,15 @@ class ColorPickerDialog(QDialog):
         old_vals.pop(index)
         old_custom.pop(index)
 
-        # 2. Fully clear the grid
         self.remove_all_suggestion_blocks()
 
-        # 3. Rebuild the exact number of blocks needed
         for _ in range(old_count - 1):
             self.add_suggestion_block(update_ui=False)  
 
-        # 4. Restore the saved values/custom hexes
         for i in range(len(old_vals)):
             self.current_sugg_vals[i] = old_vals[i] 
             self.sugg_custom_hex[i] = old_custom[i]
 
-        # 5. Update GUI
         self.update_preview()
 
     def apply_main_color(self):
@@ -711,7 +777,7 @@ class ColorPickerDialog(QDialog):
 
             sele = self.sel_combo.currentText()
             run(self.session, f"color {sele} {hex_color}")
-            print(f"MolNympheas: Applied custom color ({hex_color.upper()}) to '{sele}'.")
+            print(f"MolXNympheas: Applied custom color ({hex_color.upper()}) to '{sele}'.")
             
         elif ENV == "pymol":
             if isinstance(val_or_hex, str) and val_or_hex.startswith('#'):
@@ -735,7 +801,6 @@ class ColorPickerDialog(QDialog):
 
 _color_dialog = None
 
-# Using *args allows PyMOL to call the function without error, while ChimeraX provides a session object
 def launch_color_picker(*args):
     global _color_dialog
     session = args[0] if args else None
@@ -743,7 +808,6 @@ def launch_color_picker(*args):
     if _color_dialog is None:
         _color_dialog = ColorPickerDialog(session)
     else:
-        # Update session for ChimeraX just in case
         if session:
              _color_dialog.session = session
         _color_dialog.update_selection_list()
@@ -753,10 +817,8 @@ def launch_color_picker(*args):
 
 if ENV == "pymol":
     cmd.extend('MolNympheas', launch_color_picker)
-    # Auto-launch GUI when running the script in PyMOL
     if __name__ == 'pymol' or __name__ == '__main__':
         launch_color_picker()
-        
 elif ENV == "chimera":
     if 'session' in locals():
         launch_color_picker(session)
