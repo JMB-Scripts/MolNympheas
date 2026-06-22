@@ -6,11 +6,12 @@ Instead of guessing hex codes or using default PyMOL or chimeraX rainbows, this 
 
 **PyMol**
 
-<img width="600" alt="image" src="https://github.com/user-attachments/assets/9956af61-a892-4746-a969-0892017990ca" />
+<img width="1425" height="856" alt="image" src="https://github.com/user-attachments/assets/17421195-30e9-410c-ad8c-b9fefa92d0d1" />
 
 **ChimeraX**
 
-<img width="600" alt="image" src="https://github.com/user-attachments/assets/83446dff-d095-49ab-b9e1-a2bda2704d4b" />
+<img width="1424" height="834" alt="image" src="https://github.com/user-attachments/assets/d8025e20-06e6-48cf-8ca2-9d8970dc965b" />
+
 
 ## Version
 13-03-26: 
@@ -19,13 +20,24 @@ Instead of guessing hex codes or using default PyMOL or chimeraX rainbows, this 
             * - add a color picker tool
             
             * - add a gradient generator for custom color
-         
+22-06-2026: 
+**V4.0.0** 
+
+          The "Universal Workspace" Update
+              - Refactored into three independent workspaces (Matplotlib/Harmony/Custom).
+              - Added automated Color Clash Detection (Delta-E math) in CVD Matrix.
+              - Added Okabe-Ito colorblind-safe preset.
+              - Added Smart-Paste functionality for Hex codes.
+              - Fixed UI rendering for macOS and cross-platform Qt compatibility.
+                   
 ## ✨ Features
 * **Universal Cross-Compatibility:** Export your exact color scheme to a `.json` file in PyMOL and load it directly into ChimeraX (and vice versa)! The shared save format makes it effortless to keep your visual identity consistent across different software.
+* 
 * **Colorblind Accessibility (CVD Matrix):** A dedicated tab calculates the RGB distance matrix between your selected colors, simulating Normal Vision, Protanopia, and Deuteranopia to ensure your figures are universally accessible.
 
 
-<img width="615" height="305" alt="image" src="https://github.com/user-attachments/assets/4ebc4df2-7d08-44c8-ab10-72bf1fc2a045" />
+<img width="703" height="813" alt="image" src="https://github.com/user-attachments/assets/bcc74e5b-9f63-4409-bb98-ad3772440394" />
+
 
 
 * **Convenient Selection:** The **"Apply to"** dropdown automatically detects all loaded objects and models in your session. You can easily pick from the list, type a custom selection on the fly, and use the ↻ refresh button to instantly update the list without restarting the plugin.
