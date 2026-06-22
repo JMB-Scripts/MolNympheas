@@ -23,12 +23,12 @@ Instead of guessing hex codes or using default PyMOL or chimeraX rainbows, this 
 22-06-2026: 
 **V4.0.0** 
 
-          The "Universal Workspace" Update
-              - Refactored into three independent workspaces (Matplotlib/Harmony/Custom).
-              - Added automated Color Clash Detection (Delta-E math) in CVD Matrix.
-              - Added Okabe-Ito colorblind-safe preset.
-              - Added Smart-Paste functionality for Hex codes.
-              - Fixed UI rendering for macOS and cross-platform Qt compatibility.
+    - Refactored into three independent workspaces (Matplotlib/Harmony/Custom).
+    - Added automated Color Clash Detection (Delta-E math) in CVD Matrix.
+    - Added Okabe-Ito colorblind-safe preset.
+    - Added Smart-Paste functionality for Hex codes.
+    - Fixed UI rendering for macOS and cross-platform Qt compatibility.
+    - Added Illustrator palette export ".ase"
                    
 ## ✨ Features
 * **Universal Cross-Compatibility:** Export your exact color scheme to a `.json` file in PyMOL and load it directly into ChimeraX (and vice versa)! The shared save format makes it effortless to keep your visual identity consistent across different software.
@@ -76,6 +76,14 @@ Instead of guessing hex codes or using default PyMOL or chimeraX rainbows, this 
   1. In the "Apply to" section choose the selection
   2. Click on the color box of your choice.
   3. If you make new selection or new object in the "Apply to" section click on the arrow to refresh the list.
+ 
+ * **To import palett in Adobe Illustrator**
+   1. Once you export your palette as an .ase file:
+   2. Open Adobe Illustrator.
+   3. Open your Swatches panel (Window > Swatches).
+   4. Click the Menu icon in the top-right corner of the Swatches panel.
+   5. Select Open Swatch Library > Other Library...
+   6. Select the .ase file you just exported from MolNympheas.
   
 ## Why the name?
 The idea came on a way back from Paris, on the train after visiting the Orsay museum. 
