@@ -77,7 +77,7 @@ Instead of guessing hex codes or using default PyMOL or chimeraX rainbows, this 
   2. Click on the color box of your choice.
   3. If you make new selection or new object in the "Apply to" section click on the arrow to refresh the list.
  
- * **To import palett in Adobe Illustrator**
+ * **To import palette in Adobe Illustrator**
    1. Once you export your palette as an .ase file:
    2. Open Adobe Illustrator.
    3. Open your Swatches panel (Window > Swatches).
