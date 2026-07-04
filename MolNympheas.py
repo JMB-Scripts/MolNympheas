@@ -54,6 +54,11 @@ VERSIONING:
     - Added Smart-Paste functionality for Hex codes.
     - Fixed UI rendering for macOS and cross-platform Qt compatibility.
     - Added Illustrator palette export .ase
+
+04-07-2026: V5.0.0 (The PyMeraX Integration)
+    - Integrated the PyMeraX engine to bring ChimeraX-like rendering directly into PyMOL.
+    - Added a dynamic "Tab D: PyMeraX" that exclusively loads in PyMOL or Standalone modes.
+    - Included 1-click GUI buttons for Cartoon, Surface, Publication, and Ligand rendering presets.
 ==============================================================================
 '''
 import sys
@@ -106,13 +111,18 @@ except ImportError:
     HAS_MATPLOTLIB = False
 try:
     import matplotlib
-    # Force Matplotlib to run in the background so it doesn't fight ChimeraX/PyMOL for the UI!
-    matplotlib.use('Agg') 
+    try:
+        # Force Matplotlib to run in the background.
+        # Isolated in try/except: if ChimeraX/PyMOL already initialized it, we safely ignore the error!
+        matplotlib.use('Agg') 
+    except:
+        pass 
+        
     import matplotlib.pyplot as plt
     import matplotlib.colors as mcolors
     HAS_MATPLOTLIB = True
 except Exception as e:
-    print(f"MolNympheas Warning: Matplotlib disabled. Reason: {e}") 
+    print(f"MolNympheas Warning: Matplotlib disabled. Reason: {e}")
 
 # ==========================================
 # MATH ENGINES (Harmony & CVD Simulation)
@@ -169,6 +179,182 @@ def simulate_cvd(hex_color, cvd_type):
     return "#{:02X}{:02X}{:02X}".format(
         min(255, int(new_r*255)), min(255, int(new_g*255)), min(255, int(new_b*255))
     )
+# ==========================================
+# PYMERAX ENGINE (PyMOL Only)
+# ==========================================
+
+def _pmx_set_bg():
+    cmd.set_color("pymerax_bg", [0.84, 0.84, 0.84])
+    cmd.bg_color("pymerax_bg")
+
+def _pmx_base():
+    settings = {
+        "orthoscopic": 1,
+        "antialias": 2,
+        "ray_trace_mode": 0,
+        "ray_trace_gain": 0.12,
+        "ray_trace_fog": 0,
+        "ray_opaque_background": 0,
+        "depth_cue": 0,
+        "hash_max": 300,
+    }
+    for k, v in settings.items():
+        cmd.set(k, v)
+
+def _pmx_lights():
+    settings = {
+        "ambient": 0.40,
+        "direct": 0.40,
+        "reflect": 0.20,
+        "specular": 0.08,
+        "shininess": 8,
+        "spec_direct": 0,
+        "light_count": 8,
+    }
+    for k, v in settings.items():
+        cmd.set(k, v)
+
+    # Manual lights
+    cmd.set("light", (-0.4, -0.3, -1.0))
+    cmd.set("light2", (-0.8, -0.2, 0.2))
+    cmd.set("light3", (0.6, -0.7, -0.1))
+
+def _pmx_ao_cartoon():
+    try:
+        cmd.set("ambient_occlusion_mode", 1)
+        cmd.set("ambient_occlusion_scale", 10)
+        cmd.set("ambient_occlusion_smooth", 8)
+    except:
+        pass
+
+def _pmx_ao_surface():
+    try:
+        cmd.set("ambient_occlusion_mode", 2)
+        cmd.set("ambient_occlusion_scale", 14)
+        cmd.set("ambient_occlusion_smooth", 14)
+    except:
+        pass
+
+def _pmx_cartoon():
+    cmd.hide("everything")
+    cmd.show("cartoon")
+    
+    settings = {
+        "cartoon_fancy_helices": 1,
+        "cartoon_oval_length": 1.2,
+        "cartoon_oval_width": 1.1,
+        "cartoon_sampling": 20,
+        "cartoon_smooth_loops": 1,
+        "cartoon_flat_sheets": 0,
+        "cartoon_highlight_color": -1,
+    }
+    for k, v in settings.items():
+        cmd.set(k, v)
+    _pmx_ao_cartoon()
+
+def _pmx_surface():
+    cmd.hide("everything")
+    
+    settings = {
+        "surface_quality": 1, # Qualité à 1 pour la vitesse !
+        "surface_smooth_edges": 1,
+        "surface_solvent": 0,
+        "transparency": 0,
+        "transparency_mode": 2,
+        "two_sided_lighting": 1,
+        
+        # Lighting (less extreme)
+        "ambient": 0.46,
+        "direct": 0.30,
+        "reflect": 0.34,
+        "specular": 0.02,
+        "shininess": 2,
+        
+        "ray_shadows": 1,
+        "ray_shadow_decay_factor": 0.08,
+        "ray_shadow_decay_range": 4.5,
+    }
+    for k, v in settings.items():
+        cmd.set(k, v)
+
+    # Better grazing-angle lights for surfaces
+    cmd.set("light", (-0.3, -0.2, -1.0))
+    cmd.set("light2", (-1.0, 0.0, 0.4))
+    cmd.set("light3", (0.8, -0.5, 0.2))
+
+    _pmx_ao_surface()
+    
+    # Affichage en dernier pour éviter le double calcul
+    cmd.show("surface", "polymer") 
+
+def _pmx_ligand():
+    cmd.hide("everything")
+    cmd.show("cartoon")
+    cmd.show("sticks", "organic")
+    
+    # --- LES NOUVEAUTÉS LIGAND ---
+    cmd.set("cartoon_transparency", 0.6)  # Rend la protéine fantomatique/transparente
+    
+    try:
+        # Centre automatiquement la caméra sur les petites molécules avec une marge de 4 Angströms
+        cmd.zoom("organic", buffer=4.0, animate=-1) 
+    except: 
+        pass
+    
+    # Réglages d'origine pour rendre le ligand brillant et joli
+    settings = {
+        "stick_radius": 0.18,
+        "stick_ball": 1,
+        "stick_ball_ratio": 1.5,
+        "valence": 1,
+        "specular": 0.20,
+        "shininess": 18,
+    }
+    for k, v in settings.items():
+        cmd.set(k, v)
+
+
+
+# ============================================================
+# Main PyMeraX Apply Function
+# ============================================================
+def pymerax_apply(mode="cartoon"):
+    if ENV != "pymol":
+        print("MolNympheas: PyMeraX features are only active inside PyMOL.")
+        return
+
+    cmd.reinitialize("settings")
+    mode = mode.lower().strip()
+
+    _pmx_set_bg()
+    _pmx_base()
+    _pmx_lights()
+
+    if mode == "cartoon":
+        _pmx_cartoon()
+
+    elif mode == "surface":
+        _pmx_surface()
+
+    elif mode == "publication":
+        _pmx_cartoon()
+        cmd.bg_color("white")
+        
+        # --- LES NOUVEAUTÉS PUBLICATION ---
+        cmd.set("ray_trace_mode", 1)       # Active les contours (Outlines)
+        cmd.set("ray_trace_color", "black") # Force les contours en noir absolu
+        cmd.set("ray_trace_gain", 0.08)    # Trait légèrement plus épais et visible
+        
+        # Éclairage optimisé pour le papier (moins d'ombres dures)
+        cmd.set("ambient", 0.55)
+        cmd.set("direct", 0.25)
+
+    elif mode == "ligand":
+        # Applique les réglages cartoon pour le contexte, puis les réglages ligands
+        _pmx_cartoon() 
+        _pmx_ligand()
+
+    print(f"MolNympheas: PyMeraX [{mode.upper()}] mode applied!")
 
 # ==========================================
 # PHASE 1: STATE MANAGER
@@ -469,6 +655,8 @@ class MolNympheasUI(QMainWindow):
         self.tabs.addTab(self.build_tab_A(), "A: Matplotlib")
         self.tabs.addTab(self.build_tab_B(), "B: Auto-Harmony")
         self.tabs.addTab(self.build_tab_C(), "C: Custom Canvas")
+        if ENV in ["pymol", "standalone"]:
+            self.tabs.addTab(self.build_tab_D(), "D: PyMeraX")
         
         self.main_layout.addWidget(self.tabs)
         
@@ -599,6 +787,50 @@ class MolNympheasUI(QMainWindow):
         lay.addStretch()
         lay.addWidget(btn_load) # Only Tab C needs a Load button
         return self.build_workspace_frame("C", lay)
+    def build_tab_D(self):
+        wrapper = QWidget()
+        lay = QVBoxLayout(wrapper)
+        
+        # En-tête informatif
+        info = QLabel("<b>PyMeraX Engine:</b> Appliquez instantanément un rendu haute qualité (façon ChimeraX) à votre session PyMOL.<br><i>Note: Cela réinitialisera vos paramètres d'éclairage actuels.</i>")
+        info.setWordWrap(True)
+        lay.addWidget(info)
+        lay.addWidget(self.create_divider())
+        
+        # Grille de boutons pour les 4 modes
+        grid = QGridLayout()
+        grid.setSpacing(10)
+        
+        btn_cartoon = QPushButton("🧬 Mode Cartoon")
+        btn_cartoon.setMinimumHeight(40)
+        btn_cartoon.clicked.connect(lambda: pymerax_apply("cartoon"))
+        
+        btn_surf = QPushButton("☁️ Mode Surface")
+        btn_surf.setMinimumHeight(40)
+        btn_surf.clicked.connect(lambda: pymerax_apply("surface"))
+        
+        btn_pub = QPushButton("📄 Mode Publication\n(Fond blanc)")
+        btn_pub.setMinimumHeight(40)
+        btn_pub.clicked.connect(lambda: pymerax_apply("publication"))
+        
+        btn_lig = QPushButton("💊 Mode Ligand\n(Surbrillance)")
+        btn_lig.setMinimumHeight(40)
+        btn_lig.clicked.connect(lambda: pymerax_apply("ligand"))
+        
+        grid.addWidget(btn_cartoon, 0, 0)
+        grid.addWidget(btn_surf, 0, 1)
+        grid.addWidget(btn_pub, 1, 0)
+        grid.addWidget(btn_lig, 1, 1)
+        
+        lay.addLayout(grid)
+        
+        # Conseil d'utilisation en bas
+        tip = QLabel("💡 <b>Astuce :</b> Une fois le mode Publication sélectionné, tapez <code>ray</code> dans la console PyMOL pour obtenir l'image finale.")
+        tip.setStyleSheet("color: #666;")
+        lay.addStretch()
+        lay.addWidget(tip)
+        
+        return wrapper
 
     # --- WORKSPACE LOGIC ---
     def render_tab_blocks(self, tab_key, is_editable):
