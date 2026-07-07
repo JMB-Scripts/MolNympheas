@@ -29,6 +29,12 @@ Instead of guessing hex codes or using default PyMOL or chimeraX rainbows, this 
     - Added Smart-Paste functionality for Hex codes.
     - Fixed UI rendering for macOS and cross-platform Qt compatibility.
     - Added Illustrator palette export ".ase"
+    
+**V5.0.0** 
+04-07-2026: V5.0.0 (The PyMeraX Integration)
+    - Integrated the PyMeraX engine to bring ChimeraX-like rendering directly into PyMOL.
+    - Added a dynamic "Tab D: PyMeraX" that exclusively loads in PyMOL or Standalone modes.
+    - Included 1-click GUI buttons for Cartoon, Surface, Publication, and Ligand rendering presets.
                    
 ## ✨ Features
 * **Universal Cross-Compatibility:** Export your exact color scheme to a `.json` file in PyMOL and load it directly into ChimeraX (and vice versa)! The shared save format makes it effortless to keep your visual identity consistent across different software.
