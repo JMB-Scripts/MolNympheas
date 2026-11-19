@@ -14,13 +14,13 @@ Instead of guessing hex codes or using default PyMOL or chimeraX rainbows, this 
 
 
 ## Version
-13-03-26: 
-           **v3.1.0**
+
+**v3.1.0**
 
             * - add a color picker tool
             
             * - add a gradient generator for custom color
-22-06-2026: 
+
 **V4.0.0** 
 
     - Refactored into three independent workspaces (Matplotlib/Harmony/Custom).
@@ -31,12 +31,26 @@ Instead of guessing hex codes or using default PyMOL or chimeraX rainbows, this 
     - Added Illustrator palette export ".ase"
     
 **V5.0.0** 
-04-07-2026: V5.0.0 (The PyMeraX Integration)
+
+(The PyMeraX Integration)
     - Integrated the PyMeraX engine to bring ChimeraX-like rendering directly into PyMOL.
     - Added a dynamic "Tab D: PyMeraX" that exclusively loads in PyMOL or Standalone modes.
     - Included 1-click GUI buttons for Cartoon, Surface, Publication, and Ligand rendering presets.
+ 
  **V6.0.0**
- 19-11-206
+ 
+The "Water Lily" Redesign
+    - New light, flat, compact interface with one global stylesheet.
+    - Colormaps: all Matplotlib maps grouped by family (incl. berlin, managua, vanimo),
+      cmcrameri / cmocean when installed, search field, gradient previews,
+      reverse toggle and range slider.
+    - Harmony: 33 rules in 4 families (wheel, light & shade, mood, for structures),
+      draggable hue wheel, spread / variation / lightness / vibrance, perceptual
+      OKLCH or classic HSV engine, 4 orderings, "Vary", presets.
+    - Compact tiles with hover actions, right-click menu, keyboard control and
+      a label showing which target each colour was applied to.
+    - Status bar with exact commands, live contrast readout, colour-vision popup.
+    - Help panel for each tab. Exports to PyMOL (.pml) and ChimeraX (.cxc) scripts.
  
                    
 ## ✨ Features
