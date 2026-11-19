@@ -6,11 +6,11 @@ Instead of guessing hex codes or using default PyMOL or chimeraX rainbows, this 
 
 **PyMol**
 
-<img width="1425" height="856" alt="image" src="https://github.com/user-attachments/assets/17421195-30e9-410c-ad8c-b9fefa92d0d1" />
+<img width="956" height="385" alt="image" src="https://github.com/user-attachments/assets/781a7d31-6f5e-4045-b53c-1d4b15e0f564" />
 
 **ChimeraX**
 
-<img width="1424" height="834" alt="image" src="https://github.com/user-attachments/assets/d8025e20-06e6-48cf-8ca2-9d8970dc965b" />
+<img width="956" height="385" alt="image" src="https://github.com/user-attachments/assets/d79351f0-14cb-4b06-b1c3-23e928bbdb49" />
 
 
 ## Version
@@ -35,6 +35,9 @@ Instead of guessing hex codes or using default PyMOL or chimeraX rainbows, this 
     - Integrated the PyMeraX engine to bring ChimeraX-like rendering directly into PyMOL.
     - Added a dynamic "Tab D: PyMeraX" that exclusively loads in PyMOL or Standalone modes.
     - Included 1-click GUI buttons for Cartoon, Surface, Publication, and Ligand rendering presets.
+ **V6.0.0**
+ 19-11-206
+ 
                    
 ## ✨ Features
 * **Universal Cross-Compatibility:** Export your exact color scheme to a `.json` file in PyMOL and load it directly into ChimeraX (and vice versa)! The shared save format makes it effortless to keep your visual identity consistent across different software.
