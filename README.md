@@ -4,6 +4,13 @@
 
 Instead of guessing hex codes or using default PyMOL or chimeraX rainbows, this tool uses Matplotlib to let you smoothly slide through perceptually uniform palettes (like *Viridis*, *Turbo*, *Plasma*, etc.) and automatically calculates the highest-contrast complementary colors for your complexes.
 
+
+<img width="886" height="834" alt="image" src="https://github.com/user-attachments/assets/dfabc1a4-365f-42e6-9de8-8d29476baa6e" />
+
+
+
+
+
 **PyMol**
 
 <img width="956" height="385" alt="image" src="https://github.com/user-attachments/assets/781a7d31-6f5e-4045-b53c-1d4b15e0f564" />
@@ -59,7 +66,7 @@ The "Water Lily" Redesign
 * **Colorblind Accessibility (CVD Matrix):** A dedicated tab calculates the RGB distance matrix between your selected colors, simulating Normal Vision, Protanopia, and Deuteranopia to ensure your figures are universally accessible.
 
 
-<img width="703" height="813" alt="image" src="https://github.com/user-attachments/assets/bcc74e5b-9f63-4409-bb98-ad3772440394" />
+<img width="408" height="175" alt="image" src="https://github.com/user-attachments/assets/d37ad7ff-6063-4035-b8b3-2a3908a7dbcf" />
 
 
 
